@@ -62,7 +62,7 @@ void randomPowerUp(char ground[][MAX], int* pt_x, int* pt_y)
 void UpdateBody(BODY snake[], int dimensione)
 {
     
-    for (int i = dimensione-1; i > 0; i--)
+    for (int i = dimensione; i > 0; i--)
     {
         snake[i] = snake[i-1];
     }
