@@ -23,7 +23,7 @@ void printGround(char playGround[][MAX], int max)
 {
     for (int i = 0; i < MAX; i++)
     {
-        printf("- ");
+        printf("-");
     }
     puts("");
     
@@ -31,12 +31,24 @@ void printGround(char playGround[][MAX], int max)
     {
         for (int j = 0; j < max; j++)
         {
-            printf("%c ",playGround[i][j]);
+            if (j == 0)
+            {
+                printf("|");
+            }
+            printf("%c",playGround[i][j]);
+            if (j == max-1)
+            {
+                printf("|");
+            }
+            
         }
-        printf("\n");
+        puts(" ");
+    }
+    for (int i = 0; i < MAX; i++)
+    {
+        printf("-");
     }
 }
-
 void UpDateGround(BODY snake[], char ground[][MAX], int dimensione,char valore)
 {
     int x;
