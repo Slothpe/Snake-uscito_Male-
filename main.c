@@ -30,6 +30,7 @@ int main(void)
     do {
         printGround(ground,MAX);
         scanf("%c",&mossa);
+        noecho();
         
         
        
@@ -42,7 +43,10 @@ int main(void)
                 UpdateBody(snake, powerUp);
                 ground[y_body][x_body] = ' ';
                 snake[0].y =(snake[0].y > MAX-1? 0: snake[0].y+1);
-                
+                if (ground[snake[0].y][snake[0].x] == 'o')
+                {
+                    mossa = 'n';
+                }
                 
                 
                 break;
@@ -54,7 +58,10 @@ int main(void)
                 UpdateBody(snake, powerUp);
                 ground[y_body][x_body] = ' ';
                 snake[0].y = (snake[0].y < 0? MAX-1 : snake[0].y-1);
-                
+                if (ground[snake[0].y][snake[0].x] == 'o')
+                {
+                    mossa = 'n';
+                }
                 break;
                 
             case 'd':
@@ -64,7 +71,10 @@ int main(void)
                 UpdateBody(snake, powerUp);
                 ground[y_body][x_body] = ' ';
                 snake[0].x = (snake[0].x > MAX-1 ? 0 :  snake[0].x+1);
-                
+                if (ground[snake[0].y][snake[0].x] == 'o')
+                {
+                    mossa = 'n';
+                }
                 break;
                 
             case 'a':
@@ -75,7 +85,10 @@ int main(void)
                 UpdateBody(snake, powerUp);
                 ground[y_body][x_body] = ' ';
                 snake[0].x = (snake[0].x < 0 ? MAX-1 :  snake[0].x-1);
-                
+                if (ground[snake[0].y][snake[0].x] == 'o')
+                {
+                    mossa = 'n';
+                }
                 break;
             default:
                 
@@ -94,7 +107,7 @@ int main(void)
             printf("HAI VINTO\n");
             mossa = 'n';
         }
-        printf("Punti: %d\n",powerUp);
+       // printf("Punti: %d\n",powerUp);
         UpDateGround(snake, ground, powerUp,'o');
        clear();
        refresh();
