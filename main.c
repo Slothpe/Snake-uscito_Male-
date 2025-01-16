@@ -1,16 +1,24 @@
 
 #include <stdio.h>
 #include "Mylib.h"
+#include <ncurses.h>
+/*
+ #include<unistd.h> Includi questa libreria se vuoi rendere il gioco in loop in modo automatico
+ sleep(10); // per inserire un delay, essendo che quando va in loop è troppo veloce
+ */
+
 
 
 int main(void)
 {
 
+    initscr();
     char ground [MAX][MAX];
-    BODY snake[10];
+    BODY snake[MAX*MAX];
     int powerUp = 0;
     char mossa;
-    char buffer = 'z';
+    int x_body = 0;
+    int y_body = 0;
     int x;
     int y;
     
@@ -23,22 +31,16 @@ int main(void)
         printGround(ground,MAX);
         scanf("%c",&mossa);
         
+        
        
         switch (mossa)
         {
             case 's':
-              
+               
+                x_body = snake[powerUp].x;
+                y_body = snake[powerUp].y;
                 UpdateBody(snake, powerUp);
-                
-                if (buffer == 'd')
-                {
-                    ground[snake[powerUp].y][snake[powerUp].x-1] = ' ';
-                }else if (buffer == 'a')
-                {
-                    ground[snake[powerUp].y][snake[powerUp].x+1] = ' ';
-                }
-                
-                ground[snake[powerUp].y-1][snake[powerUp].x] = ' ';
+                ground[y_body][x_body] = ' ';
                 snake[0].y =(snake[0].y > MAX-1? 0: snake[0].y+1);
                 
                 
@@ -46,36 +48,32 @@ int main(void)
                 break;
                 
             case 'w':
-                
+               
+                x_body = snake[powerUp].x;
+                y_body = snake[powerUp].y;
                 UpdateBody(snake, powerUp);
-                
-                
-                ground[snake[powerUp].y+1][snake[powerUp].x] = ' ';
+                ground[y_body][x_body] = ' ';
                 snake[0].y = (snake[0].y < 0? MAX-1 : snake[0].y-1);
                 
                 break;
                 
             case 'd':
                 
+                x_body = snake[powerUp].x;
+                y_body = snake[powerUp].y;
                 UpdateBody(snake, powerUp);
-                
-                if (buffer == 'w')
-                {
-                    ground[snake[powerUp].y+1][snake[powerUp].x] = ' ';
-                }else if (buffer == 's')
-                {
-                    ground[snake[powerUp].y-1][snake[powerUp].x] = ' ';
-                }
-                
-                ground[snake[powerUp].y][snake[powerUp].x-1] = ' ';
+                ground[y_body][x_body] = ' ';
                 snake[0].x = (snake[0].x > MAX-1 ? 0 :  snake[0].x+1);
                 
                 break;
                 
             case 'a':
                 
+                
+                x_body = snake[powerUp].x;
+                y_body = snake[powerUp].y;
                 UpdateBody(snake, powerUp);
-                ground[snake[powerUp].y][snake[powerUp].x+1] = ' ';
+                ground[y_body][x_body] = ' ';
                 snake[0].x = (snake[0].x < 0 ? MAX-1 :  snake[0].x-1);
                 
                 break;
@@ -90,11 +88,18 @@ int main(void)
             randomPowerUp(ground, &x, &y);
             powerUp = powerUp + 1;
         }
-                
-        UpDateGround(snake, ground, powerUp,'x');
-        buffer = mossa;
+        
+        if (powerUp == MAX*MAX-1)
+        {
+            printf("HAI VINTO\n");
+            mossa = 'n';
+        }
+        printf("Punti: %d\n",powerUp);
+        UpDateGround(snake, ground, powerUp,'o');
+       clear();
+       refresh();
     } while (mossa != 'n');
     
-   
+    endwin();
     return 0;
 }
