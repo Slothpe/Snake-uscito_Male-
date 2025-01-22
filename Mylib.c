@@ -1,77 +1,79 @@
 //
 //  Mylib.c
-//  Snake
+//  Snake1.1
 //
-//  Created by Perrulli Antonio on 13/01/25.
+//  Created by Perrulli Antonio on 15/01/25.
 //
+
 #include <stdio.h>
-#include "Mylib.h"
-#include <time.h>
+#include <ncurses.h>
 #include <stdlib.h>
+#include <time.h>
+#include "Mylib.h"
 
 
-void setPlayGround(char* pt_min, char* pt_max)
+void SetPlayGround(char ground[][COLONNE], int righe, int colonne)
 {
     
-    for (char* i = pt_min; i <= pt_max; i++)
+    for (int i = 0; i< righe; i++)
     {
-        *i = ' ';
-    }
-}
-
-void printGround(char playGround[][MAX], int max)
-{
-    for (int i = 0; i < MAX; i++)
-    {
-        printf("-");
-    }
-    puts("");
-    
-    for (int i = 0; i< max; i++)
-    {
-        for (int j = 0; j < max; j++)
-        {
-            if (j == 0)
-            {
-                printf("|");
-            }
-            printf("%c",playGround[i][j]);
-            if (j == max-1)
-            {
-                printf("|");
-            }
+        for (int j = 0; j < colonne; j++) {
             
+            ground[i][j] = ' ';
         }
-        puts(" ");
-    }
-    for (int i = 0; i < MAX; i++)
-    {
-        printf("-");
-    }
-}
-void UpDateGround(BODY snake[], char ground[][MAX], int dimensione,char valore)
-{
-    int x;
-    int y;
-    //in base alla lunghezza del serpente seganata dalla variabile powerUp del main, associo ogni cordinata un valore che indica il serpente che si muove
-    for (int i = 0; i < dimensione; i++)
-    {
-        x = snake[i].x;
-        y = snake[i].y;
-        ground[y][x] = valore;
     }
 }
 
-void randomPowerUp(char ground[][MAX], int* pt_x, int* pt_y)
+void PrintPlayGround(char ground[][COLONNE], int righe, int colonne)
+{
+    /*
+     Siccome stiamo stampando sul prompt dobbiamop ragionare in base alla posizione del cursore.
+     Prima di tutto posiziono il curosre alla posziozione x = 0, y = 0;
+     successivamente ogni riga del array bidimensionale devo andare a capo e quindi mi basta passare come argomento
+     della funzione move x = i e y = 0
+     */
+    move(0, 0); //funzione che ci permette di modificare la posizone del cursore (ncurses.h)
+    
+    for (int i = 0; i< righe; i++)
+    {
+        for (int j = 0; j < colonne; j++)
+        {
+            addch(ground[i][j]);
+        }
+        move(i, 0);
+    }
+}
+
+char CheckCollisione(char ground [][COLONNE], CORDINATE snake, char mossa)
+{
+    //se non e stato colpito nulla allora non chiudo il programma
+    return (ground[snake.y][snake.x] == 'o' ? 'n' : mossa);
+    
+}
+
+void RandomPowerUp(int* pt_y , int* pt_x , char ground[][COLONNE])
 {
     srand(time(NULL));
-    *pt_x = rand()%MAX-1;
-    *pt_y = rand()%MAX-1;
+    
+    *pt_x = rand()%COLONNE;
+    *pt_y = rand()%RIGHE;
     
     ground[*pt_y][*pt_x] = '@';
 }
 
-void UpdateBody(BODY snake[], int dimensione)
+void UpgradeGround(char ground[][COLONNE], CORDINATE snake[], int powerUp)
+{
+    int x;
+    int y;
+    for (int i = 0; i <= powerUp; i++) {
+        x = snake[i].x;
+        y = snake[i].y;
+        
+        ground[y][x] = 'o';
+    }
+}
+
+void UpdateBody(CORDINATE snake[], int dimensione)
 {
     
     for (int i = dimensione; i > 0; i--)
