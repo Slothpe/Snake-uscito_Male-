@@ -1,124 +1,136 @@
-
-#include <stdio.h>
-#include "Mylib.h"
-#include <ncurses.h>
+//
+//  main.c
+//  Snake1.1
+//
+//  Created by Perrulli Antonio on 14/01/25.
+//
 /*
- #include<unistd.h> Includi questa libreria se vuoi rendere il gioco in loop in modo automatico
- sleep(10); // per inserire un delay, essendo che quando va in loop è troppo veloce
+    ISTRUZIONI D'USO:
+    Premi il pulsante n per chiudere il gioco;
+    I comandi sono w a s d;
+    Pian piano che mi vengono in mente li scrivo (Forse);
+ 
+ 
+ 
  */
 
-
+#include <stdio.h>
+#include <ncurses.h>
+#include <stdlib.h>
+#include "Mylib.h"
 
 int main(void)
 {
-
-    char ground [MAX][MAX];
-    BODY snake[MAX*MAX];
-    int powerUp = 0;
-    char mossa;
-    int buffer = 's';
-    int x_body = 0;
-    int y_body = 0;
-    int x;
-    int y;
+    CORDINATE snake[RIGHE*COLONNE]; /* corpo del serpente, ogni parte del serpente ha delle cordinate x y
+                                     che servono per orientare sul array bidimensionale y = riga x = colonna*/
+    int powerUp = 1; // ci indica la dimensione attuale del serpente
+    char mossa; // mossa inserita dal utente
+    char buffer = 's'; //il serpente inzia a muoversi andando verso il basso
+    char ground[RIGHE][COLONNE];
+    initscr(); //serve per inizializzare il prompt in modalita ncurses
+    noecho();//srve per non avere in usscita il buffer di input da parte del utente
+    nodelay(stdscr, TRUE);//disattivo il tempo di attesa del input da parte del utente;
     
-    nodelay(stdscr, TRUE);
-    randomPowerUp(ground, &x, &y);
+    int x = 0;
+    int y = 0;
+    int x_apple = 0;
+    int y_apple = 0;
     
-    setPlayGround(&ground[0][0], &ground[MAX-1][MAX-1]);
     
-    
+    RandomPowerUp(&y_apple, &x_apple, ground);
+    SetPlayGround(ground, RIGHE, COLONNE);
+    snake[0].x = 0;
+    snake[0].y = 0;
+   
     do {
-        printGround(ground,MAX);
+
         mossa = getch();
-        if(mossa != ERR)
+        if (mossa != ERR)//ERR sarebe che non è stato inserito alcun valore da parte del utente.
         {
             buffer = mossa;
         }
-        noecho();
         
-        
-       
         switch (buffer)
         {
-            case 's':
-               
-                x_body = snake[powerUp].x;
-                y_body = snake[powerUp].y;
+            case 'w': // mossa su
+    
+                x = snake[powerUp].x;
+                y = snake[powerUp].y;
+                ground[y][x] = ' ';
+                snake[0].y = ( snake[0].y <= 0? RIGHE-1 :  snake[0].y-1);
                 UpdateBody(snake, powerUp);
-                ground[y_body][x_body] = ' ';
-                snake[0].y =(snake[0].y > MAX-1? 0: snake[0].y+1);
+                ground[y][x] = ' ';
                 if (ground[snake[0].y][snake[0].x] == 'o')
                 {
                     mossa = 'n';
                 }
-                
-                
+               
                 break;
                 
-            case 'w':
+            case 's':
                
-                x_body = snake[powerUp].x;
-                y_body = snake[powerUp].y;
+                x = snake[powerUp].x;
+                y = snake[powerUp].y;
+                snake[0].y = (snake[0].y >= RIGHE-1? 0 :  snake[0].y+1);
                 UpdateBody(snake, powerUp);
-                ground[y_body][x_body] = ' ';
-                snake[0].y = (snake[0].y < 0? MAX-1 : snake[0].y-1);
+                ground[y][x] = ' ';
                 if (ground[snake[0].y][snake[0].x] == 'o')
                 {
                     mossa = 'n';
                 }
+                
+               
                 break;
                 
             case 'd':
                 
-                x_body = snake[powerUp].x;
-                y_body = snake[powerUp].y;
+                x = snake[powerUp].x;
+                y = snake[powerUp].y;
+                snake[0].x = ( snake[0].x >= COLONNE-1 ? 0 :  snake[0].x + 1);
                 UpdateBody(snake, powerUp);
-                ground[y_body][x_body] = ' ';
-                snake[0].x = (snake[0].x > MAX-1 ? 0 :  snake[0].x+1);
+                ground[y][x] = ' ';
                 if (ground[snake[0].y][snake[0].x] == 'o')
                 {
                     mossa = 'n';
                 }
+               
+                
                 break;
                 
             case 'a':
                 
-                
-                x_body = snake[powerUp].x;
-                y_body = snake[powerUp].y;
+                x = snake[powerUp].x;
+                y = snake[powerUp].y;
+                snake[0].x = (snake[0].x <= 0 ? COLONNE-1 :  snake[0].x - 1);
                 UpdateBody(snake, powerUp);
-                ground[y_body][x_body] = ' ';
-                snake[0].x = (snake[0].x < 0 ? MAX-1 :  snake[0].x-1);
+                ground[y][x] = ' ';
                 if (ground[snake[0].y][snake[0].x] == 'o')
                 {
                     mossa = 'n';
                 }
-                break;
-            default:
+               
                 
-                puts("");
+                break;
+                
+            default:
                 break;
         }
         
-        if (ground[y][x] == ' ')
-        {
-            randomPowerUp(ground, &x, &y);
+        UpgradeGround(ground, snake, powerUp);
+        PrintPlayGround(ground, RIGHE, COLONNE);
+        if (ground[y_apple][x_apple] == ' ') {
+            RandomPowerUp(&y_apple, &x_apple, ground);
             powerUp = powerUp + 1;
         }
-        
-        if (powerUp == MAX*MAX-1)
-        {
-            printf("HAI VINTO\n");
-            buffer = 'n';
-        }
-       // printf("Punti: %d\n",powerUp);
-        UpDateGround(snake, ground, powerUp,'o');
+        refresh();
         napms(100);
-       clear();
-       refresh();
+        
     } while (mossa != 'n');
     
-     endwin();
-    return 0;
+    
+    getch();
+    
+    
+    endwin();//chiusura del prompt in modalita ncurses
 }
+
