@@ -12,16 +12,17 @@
 int main(void)
 {
 
-    initscr();
     char ground [MAX][MAX];
     BODY snake[MAX*MAX];
     int powerUp = 0;
     char mossa;
+    int buffer = 's';
     int x_body = 0;
     int y_body = 0;
     int x;
     int y;
     
+    nodelay(stdscr, TRUE);
     randomPowerUp(ground, &x, &y);
     
     setPlayGround(&ground[0][0], &ground[MAX-1][MAX-1]);
@@ -29,12 +30,16 @@ int main(void)
     
     do {
         printGround(ground,MAX);
-        scanf("%c",&mossa);
+        mossa = getch();
+        if(mossa != ERR)
+        {
+            buffer = mossa;
+        }
         noecho();
         
         
        
-        switch (mossa)
+        switch (buffer)
         {
             case 's':
                
@@ -105,14 +110,15 @@ int main(void)
         if (powerUp == MAX*MAX-1)
         {
             printf("HAI VINTO\n");
-            mossa = 'n';
+            buffer = 'n';
         }
        // printf("Punti: %d\n",powerUp);
         UpDateGround(snake, ground, powerUp,'o');
+        napms(100);
        clear();
        refresh();
     } while (mossa != 'n');
     
-    endwin();
+     endwin();
     return 0;
 }
