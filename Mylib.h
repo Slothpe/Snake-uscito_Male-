@@ -1,28 +1,36 @@
 //
 //  Mylib.h
-//  Snake
+//  Snake1.1
 //
-//  Created by Perrulli Antonio on 13/01/25.
+//  Created by Perrulli Antonio on 15/01/25.
 //
-#define MAX 20
-#include <stdio.h>
 
+
+#define RIGHE 20
+#define COLONNE 30
 typedef struct{
     
-    int x; //Colonne
-    int y; //Righe
+    int x;
+    int y;
     
-} BODY;
+}CORDINATE;
 
-//aggiorno il campo di gioco in base al corpo del serpente
-void UpDateGround(BODY [], char[][MAX], int, char);
 
-//imposto il campo di gioco di partenza
-void setPlayGround(char*, char*);
+//[y][x] array bidimensionale
+//[RIGHE][COLONNE]
 
-//stampo il campo di gioco
-void printGround(char[][MAX], int);
+//Funzione che serve per settare il campo di gioco la prima volta
+void SetPlayGround(char [][COLONNE], int, int);
 
-void randomPowerUp(char[][MAX], int*, int*);
+//funzione per stampare il campo di gioco
+void PrintPlayGround(char [][COLONNE], int, int);
 
-void UpdateBody(BODY [], int);
+// Verifichiamo se stiamo colpendo il corpo del serpente
+char CheckCollisione(char [][COLONNE], CORDINATE, char);
+
+//Spawn casuale della mela;
+void RandomPowerUp(int* , int* , char[][COLONNE]);
+
+void UpgradeGround(char [][COLONNE], CORDINATE[], int);
+
+void UpdateBody(CORDINATE[], int);
